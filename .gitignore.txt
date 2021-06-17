@@ -1,2 +1,3 @@
 trial.py
 trial2.py
+pokedex.csv
