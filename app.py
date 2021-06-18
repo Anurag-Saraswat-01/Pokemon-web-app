@@ -112,6 +112,7 @@ def update_graph(dropdown_value):
     afig.update(layout_coloraxis_showscale=False,layout_margin=dict(b=0))
     afig.update_xaxes(visible=False)
     afig.update_yaxes(title='')
+    afig.update_traces(textfont_color='black')
     
     bfig = px.bar(
         bydf,
@@ -130,6 +131,7 @@ def update_graph(dropdown_value):
     bfig.update(layout_coloraxis_showscale=False,layout_margin=dict(t=0,b=10))
     bfig.update_xaxes(visible=False)
     bfig.update_yaxes(title='')
+    bfig.update_traces(textfont_color='black')
     
     data = transform(cdf).to_dict('records')
     columns = [dict(name=i,id=i,presentation='markdown') for i in transform(cdf).columns]
