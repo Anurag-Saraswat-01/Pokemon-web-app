@@ -87,6 +87,14 @@ body {
 	margin: 20px auto auto auto;
 }
 
+.Select-placeholder {
+	margin-top: 20px;
+}
+
+#react-select-2--value {
+	margin-top: 40px;
+}
+
 #table {
 	width: 75%;
 	margin: -20px auto auto auto;
