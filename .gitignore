@@ -4,3 +4,4 @@ pokedex.csv
 .ipynb_checkpoints/
 bulk_index.ipynb
 bulk_index_2.ipynb
+app_old.py
