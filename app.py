@@ -202,6 +202,5 @@ def update_graph(dropdown_value):
 
     return stat_fig, bst_fig, data, columns
 
-
 if __name__ == '__main__':
     app.run_server(debug=True)

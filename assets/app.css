@@ -23,6 +23,7 @@ header{
     width: 100%;
     z-index: 12;
 	font-family: "Georgia",serif;
+	margin-bottom: 20px;
 }
 
 .logo{
@@ -67,24 +68,24 @@ body {
 }
 
 #bar {
-    width: 75%;
-    margin: auto auto auto auto;
+    width: 90%;
+    margin: auto;
 	font-family: "Verdana",sans-serif;
 	font-style: bold;
 }
 
 #total_bar {
 	height: 10%;
-	width: 75%;
-	margin: auto auto auto auto;
+	width: 90%;
+	margin: auto;
 	font-family: "Verdana",sans-serif;
 	font-style: bold;
 }
 
 #dropdown {
-	width: 75%;
+	width: 90%;
 	left: 12.5%;
-	margin: 20px auto auto auto;
+	margin: auto;
 	color: darkgray;
 }
 
@@ -93,17 +94,17 @@ body {
 }
 
 #react-select-2--value {
-	margin-top: 40px;
+	margin-top: 20px;
 }
 
 #table {
-	width: 75%;
-	margin: -20px auto auto auto;
+	width: 90%;
+	margin: auto;
 }
 
 #table img{
-	width: 100px;
-	height: 100px;
+	width: auto;
+	height: fit-content;
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
