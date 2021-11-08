@@ -2,6 +2,7 @@ import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
+from dash_html_components.P import P
 import dash_table
 import plotly.express as px
 import pandas as pd
@@ -10,6 +11,7 @@ app = dash.Dash(__name__, suppress_callback_exceptions=True,
                 update_title="Updating", title="Compareon")
 server = app.server
 
+print('Loading dex')
 dex_df = pd.read_csv("pokedex_with_src.csv")
 dex_df.rename(columns={'total_points': 'BST',
                        'hp': 'HP',
@@ -17,15 +19,21 @@ dex_df.rename(columns={'total_points': 'BST',
                        'defense': 'Def',
                        'sp_attack': 'Sp Att',
                        'sp_defense': 'Sp Def',
-                       'speed': 'Speed'},
+                       'speed': 'Speed',
+                       'ability_1': 'Ability 1',
+                       'ability_2': 'Ability 2',
+                       'ability_hidden': 'Hidden Ability',
+                       'type_1': 'Type 1',
+                       'type_2': 'Type 2'},
               inplace=True)
 
 names = []
 for name in dex_df['name']:
     names.append({'label': name, 'value': name})
 
-eeveelutions = ['Eevee', 'Vaporeon', 'Jolteon', 'Flareon',
-                'Umbreon', 'Espeon', 'Glaceon', 'Leafeon', 'Sylveon']
+# eeveelutions = ['Eevee', 'Vaporeon', 'Jolteon', 'Flareon',
+#                 'Umbreon', 'Espeon', 'Glaceon', 'Leafeon', 'Sylveon']
+eeveelutions = ['Eevee', 'Umbreon', 'Espeon']
 
 
 def add_src(row):
@@ -35,7 +43,7 @@ def add_src(row):
 
 # selecting only stat columns
 required_col = ['name', 'BST', 'Speed', 'Sp Def',
-                'Sp Att', 'Def', 'Att', 'HP', 'src']
+                'Sp Att', 'Def', 'Att', 'HP', 'src', 'Ability 1', 'Ability 2', 'Hidden Ability', 'Type 1', 'Type 2']
 required_df = dex_df[required_col]
 
 # df for stats
@@ -44,13 +52,14 @@ stat_df = pd.melt(required_df, id_vars='name', value_vars=[
 # df for base stat total
 bst_df = pd.melt(required_df, id_vars='name', value_vars='BST', var_name='BST')
 # df for img src
-src_df = required_df[['name', 'src']].copy()
-src_df['img'] = src_df.apply(add_src, axis=1)
+src_df = required_df[['name', 'src', 'Type 1', 'Type 2', 'Ability 1', 'Ability 2', 'Hidden Ability']].copy()
+src_df['Image'] = src_df.apply(add_src, axis=1)
 
 
 def transform(df):
+    # df['Name'] = df['name'].copy()
     df = df.set_index('name')
-    df = df[['img']].transpose()
+    df = df[['Image', 'Type 1', 'Type 2', 'Ability 1', 'Ability 2', 'Hidden Ability']].transpose()
     return df
 
 
@@ -60,6 +69,7 @@ eevee_bst_df = bst_df[bst_df['name'].isin(eeveelutions)]
 eevee_src_df = src_df[src_df['name'].isin(eeveelutions)]
 
 # eeveelution stat graph
+print('Creating eeveelution stat graph')
 eevee_stat_fig = px.bar(
     eevee_stat_df,
     x='value',
@@ -73,7 +83,8 @@ eevee_stat_fig = px.bar(
     text='value'
 )
 for a in eevee_stat_fig.layout.annotations:
-    a.text = a.text.split("=")[1]
+    # a.text = a.text.split("=")[1]
+    a.text = ''
 eevee_stat_fig.update(layout_coloraxis_showscale=False,
                       layout_margin=dict(b=0))
 eevee_stat_fig.update_xaxes(visible=False)
@@ -81,6 +92,7 @@ eevee_stat_fig.update_yaxes(title='')
 eevee_stat_fig.update_traces(textfont_color='black')
 
 # eeveelution bst graph
+print('Creating eeveelution bst graph')
 eevee_bst_fig = px.bar(
     eevee_bst_df,
     y='BST',
@@ -103,41 +115,45 @@ eevee_bst_fig.update_yaxes(title='')
 eevee_bst_fig.update_traces(textfont_color='black')
 
 # eeveelution name and src table
+print('Creating eeveelution table')
+print(eevee_src_df, '\n')
+print(transform(eevee_src_df))
 eevee_data = transform(eevee_src_df).to_dict('records')
 eevee_columns = [dict(name=i, id=i, presentation='markdown')
                  for i in transform(eevee_src_df).columns]
 
 app.layout = html.Div(children=[
-    html.Header([
-        html.Div(children=[
-            html.Img(src='/assets/espeon_logo.png', className='esp_logo'),
-            html.P('COMPAREON', className='logo'),
-            html.Img(src='/assets/umbreon_logo.png', className='umbr_logo')
+    html.Header(children=[
+        html.Img(src='/assets/espeon_logo.png', className='esp_logo'),
+        html.P('COMPAREON', className='title'),
+        html.Img(src='/assets/umbreon_logo.png', className='umbr_logo')
+    ]),
+    html.Div(className='container', children=[
+        html.Div([
+            dcc.Dropdown(
+                id='dropdown',
+                options=names,
+                multi=True,
+                style={'background': '#111111', 'border': 'none', 'color':'black'}
+            )
+        ]),
+        html.Div(className='content', children=[
+            dash_table.DataTable(
+                id='table',
+                data=eevee_data,
+                columns=eevee_columns,
+                # style_header={'display': 'none'},
+                css=[{'selector': 'table', 'rule': 'table-layout: fixed'}],
+                style_cell={'background': '#111111', 'border': 'none', 'color':'white'},
+            ),
+            dcc.Graph(id='bar', figure=eevee_stat_fig),
+            dcc.Graph(id='total_bar', figure=eevee_bst_fig)
         ])
     ]),
-    html.Div([
-        dcc.Dropdown(
-            id='dropdown',
-            options=names,
-            multi=True,
-            style={'background': '#111111', 'border': 'none'}
-        )
-    ]),
-    html.Div(className='content', children=[
-        dash_table.DataTable(
-            id='table',
-            data=eevee_data,
-            columns=eevee_columns,
-            style_header={'display': 'none'},
-            css=[{'selector': 'table', 'rule': 'table-layout: fixed'}],
-            style_cell={'background': '#111111', 'border': 'none'},
-        ),
-        dcc.Graph(id='bar', figure=eevee_stat_fig),
-        dcc.Graph(id='total_bar', figure=eevee_bst_fig)
-    ]),
-    html.Footer('Anurag')
+    html.Footer(className='footer', children='Anurag')
 ], style={'background': '#cece8a'})
 
+print('Done\n')
 
 @app.callback(Output('bar', 'figure'), Output('total_bar', 'figure'), Output('table', 'data'),
               Output('table', 'columns'),
@@ -169,7 +185,8 @@ def update_graph(dropdown_value):
         text='value'
     )
     for a in stat_fig.layout.annotations:
-        a.text = a.text.split("=")[1]
+        # a.text = a.text.split("=")[1]
+        a.text = ''
     stat_fig.update(layout_coloraxis_showscale=False, layout_margin=dict(b=0))
     stat_fig.update_xaxes(visible=False)
     stat_fig.update_yaxes(title='')
@@ -201,6 +218,7 @@ def update_graph(dropdown_value):
                for i in transform(src_callback_df).columns]
 
     return stat_fig, bst_fig, data, columns
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

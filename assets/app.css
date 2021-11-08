@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-body{
+/* body{
     text-align: center;
 }
 
@@ -26,9 +26,8 @@ header{
 	margin-bottom: 20px;
 }
 
-.logo{
+.title{
     width: 50%;
-    /* margin: auto auto auto auto; */
     line-height: 100px;
 	color: #f7f708;
 	font-size: 40px;
@@ -42,7 +41,6 @@ header{
 	width: 80px;
 	left: 200px;
 	top: 10px;
-	/* margin: auto auto auto auto; */
 	display: block;
 	position: absolute;
 }
@@ -52,7 +50,6 @@ header{
 	width: 80px;
 	right: 200px;
 	top: 10px;
-	/* margin: auto auto auto auto; */
 	display: block;
 	position: absolute;
 }
@@ -108,4 +105,45 @@ body {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+} */
+
+header {
+	height: min(20vh, 200px);
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 5%;
+	background-color: black;
+}
+
+.title {
+	color: white;
+	font-size: 32px;
+}
+
+.footer {
+	height: min(7vh, 50px);
+	background-color: black;
+	color: white;
+	display: grid;
+	place-items: center;
+}
+
+.container {
+	padding: 2.5% 5%;
+}
+
+#dropdown {
+	color: white;
+	padding: 0.5rem 0;
+	margin-bottom: 2.5%;
+}
+
+#table img {
+	width: 100px;
+}
+
+.dash-header > *, .dash-cell-value > * {
+	text-align: center;
 }

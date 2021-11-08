@@ -1,12 +1,13 @@
 import pandas as pd
 
+
 def get_png(mons):
     sources = []
     for name in mons:
         name = name.lower()
-        if name.split()[0] in ['aegislash','zacian','zamazenta','zygarde','wormadam','wishiwashi','lycanroc','morpeko','eternatus',
-                                'gourgeist','pumpkaboo','indeedee','meowstic','toxtricity','urshifu','giratina','deoxys','shaymin',
-                                'basculin','castform','darmanitan','eiscue','hoopa','landorus','thundurus','tornadus','meloetta']:
+        if name.split()[0] in ['aegislash', 'zacian', 'zamazenta', 'zygarde', 'wormadam', 'wishiwashi', 'lycanroc', 'morpeko', 'eternatus',
+                               'gourgeist', 'pumpkaboo', 'indeedee', 'meowstic', 'toxtricity', 'urshifu', 'giratina', 'deoxys', 'shaymin',
+                               'basculin', 'castform', 'darmanitan', 'eiscue', 'hoopa', 'landorus', 'thundurus', 'tornadus', 'meloetta']:
             temp = name.split()
             if name.split()[0] == 'zygarde' and '%' in temp[1]:
                 temp[1] = temp[1].split('%')[0]
@@ -16,7 +17,7 @@ def get_png(mons):
                 x = name + '.png'
             else:
                 x = temp[0] + '-' + temp[1] + '.png'
-        elif name.split('.')[0] in ['jr','mr','galarian mr']:
+        elif name.split('.')[0] in ['jr', 'mr', 'galarian mr']:
             if name == 'mime jr.':
                 x = 'mime-jr.png'
             elif name == 'mr. mime':
@@ -25,7 +26,7 @@ def get_png(mons):
                 x = 'mr-mime-galarian.png'
             else:
                 x = 'mr-rime.png'
-        elif name.split()[0] in ['mega','galarian','alolan','primal','kyurem'] or name.split('-')[0] == 'ash':
+        elif name.split()[0] in ['mega', 'galarian', 'alolan', 'primal', 'black', 'white', 'ultra'] or name.split('-')[0] == 'ash':
             if name.split('-')[0] == 'ash':
                 temp = name.split('-')
             else:
@@ -36,6 +37,13 @@ def get_png(mons):
                 x = name + '.png'
             else:
                 x = temp[1] + '-' + temp[0] + '.png'
+        elif 'necrozma' in name.split():
+            if name.split()[0] == 'dusk':
+                x = 'necrozma-dusk-mane.png'
+            elif name.split()[0] == 'dawn':
+                x = 'necrozma-dawn-wings.png'
+            else:
+                x = 'necrozma.png'
         elif 'calyrex' in name.split():
             if name.split()[0] == 'ice':
                 x = 'calyrex-ice-rider.png'
@@ -46,18 +54,20 @@ def get_png(mons):
         elif name.split()[0] == 'partner':
             temp = name.split()
             x = temp[1] + '-lets-go.png'
-        elif name = 'nidoran♀':
+        elif name == 'nidoran♀':
             x = 'nidoran-f.png'
-        elif name = 'nidoran♂':
+        elif name == 'nidoran♂':
             x = 'nidoran-m.png'
-        elif name = 'flabébé':
+        elif name == 'flabébé':
             x = 'flabebe.png'
         else:
             x = name + '.png'
         sources.append(x)
     return sources
 
+
 if __name__ == '__main__':
     df = pd.read_csv("pokedex.csv")
     df['src'] = get_png(df['name'])
-    df.to_csv("pokedexx_with_src.csv")
+    # print(df[df['name'] == 'Ultra Necrozma'])
+    df.to_csv("pokedex_with_src.csv")
