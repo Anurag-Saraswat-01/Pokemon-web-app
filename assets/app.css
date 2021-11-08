@@ -140,8 +140,12 @@ header {
 	margin-bottom: 2.5%;
 }
 
-#table img {
-	width: 100px;
+tbody > *:nth-child(2) img {
+	width: 120px
+}
+
+tbody > *:nth-child(3) img {
+	width: 40px !important;
 }
 
 .dash-header > *, .dash-cell-value > * {
