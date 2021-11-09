@@ -2,7 +2,6 @@ import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
-from dash_html_components.P import P
 import dash_table
 import plotly.express as px
 import pandas as pd
