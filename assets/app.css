@@ -1,125 +1,33 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
-/* body{
-    text-align: center;
-}
-
-footer{
-    overflow: hidden;
-    background: black;
-    color: #f7f708;
-    height: 20px;
-    align-content: center;
-	font-family: "Georgia",serif;
-}
-
-header{
-    height: 100px;
-    background: black;
-    width: 100%;
-    z-index: 12;
-	font-family: "Georgia",serif;
-	margin-bottom: 20px;
-}
-
-.title{
-    width: 50%;
-    line-height: 100px;
-	color: #f7f708;
-	font-size: 40px;
-	display: block;
-	position: absolute;
-	left: 25%
-}
-
-.esp_logo{
-	height: 80px;
-	width: 80px;
-	left: 200px;
-	top: 10px;
-	display: block;
-	position: absolute;
-}
-
-.umbr_logo{
-	height: 80px;
-	width: 80px;
-	right: 200px;
-	top: 10px;
-	display: block;
-	position: absolute;
-}
-
-.content{
-    margin-top: 20px;
-	margin-bottom: 20px;
-}
-
-body {
-    padding: 0 0 0 0;
-	font-family: sans-serif;
-}
-
-#bar {
-    width: 90%;
-    margin: auto;
-	font-family: "Verdana",sans-serif;
-	font-style: bold;
-}
-
-#total_bar {
-	height: 10%;
-	width: 90%;
-	margin: auto;
-	font-family: "Verdana",sans-serif;
-	font-style: bold;
-}
-
-#dropdown {
-	width: 90%;
-	left: 12.5%;
-	margin: auto;
-	color: darkgray;
-}
-
-.Select-placeholder {
-	margin-top: 20px;
-}
-
-#react-select-2--value {
-	margin-top: 20px;
-}
-
-#table {
-	width: 90%;
-	margin: auto;
-}
-
-#table img{
-	width: auto;
-	height: fit-content;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-} */
 
 header {
 	height: min(20vh, 200px);
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	justify-content: space-between;
+	/* justify-content:space-evenly; */
 	padding: 0 5%;
 	background-color: black;
 }
 
 .title {
+	margin-left: 4rem;
+	margin-right:auto;
+}
+
+nav {
+	display: flex;
+	gap: 2rem;
+	margin-right: 4rem;
+}
+
+.title a, nav a {
 	color: white;
-	font-size: 32px;
+	text-decoration: none;
 }
 
 .footer {
@@ -134,6 +42,30 @@ header {
 	padding: 2.5% 5%;
 }
 
+/* home */
+.home {
+	display: flex;
+	flex-direction: row;
+	background-color: antiquewhite;
+}
+
+.home_img {
+	width: 40%;
+}
+
+.home_img img {
+	width: 100%
+}
+
+.home_text {
+	width: 60%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 2rem;
+}
+
+/* compare */
 #dropdown {
 	color: white;
 	padding: 0.5rem 0;
