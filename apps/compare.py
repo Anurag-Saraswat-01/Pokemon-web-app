@@ -7,6 +7,7 @@ import plotly.io as pio
 import pandas as pd
 
 from . import theme
+from app import app
 
 pio.templates.default = 'custom'
 
