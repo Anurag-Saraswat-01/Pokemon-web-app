@@ -3,9 +3,13 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_table
 import plotly.express as px
+import plotly.io as pio
 import pandas as pd
 
 from app import app
+from . import theme
+
+pio.templates.default = 'custom'
 
 print('Loading dex')
 dex_df = pd.read_csv("pokedex_markdown.csv")
@@ -16,12 +20,13 @@ for name in dex_df['Name']:
 
 # eeveelutions = ['Eevee', 'Vaporeon', 'Jolteon', 'Flareon',
 #                 'Umbreon', 'Espeon', 'Glaceon', 'Leafeon', 'Sylveon']
-eeveelutions = ['Eevee', 'Umbreon', 'Espeon']
+eeveelutions = ['Eevee', 'Espeon', 'Umbreon']
+
 
 # df for stats
 stat_df = pd.melt(dex_df, id_vars='Name', value_vars=[
                   'Speed', 'Sp. Defense', 'Sp. Attack', 'Defense', 'Attack', 'HP'], var_name='stat')
-# df for base stat total
+# df for Stat Total
 bst_df = pd.melt(dex_df, id_vars='Name',
                  value_vars='Stat Total', var_name='Stat Total')
 # df for img src
@@ -51,18 +56,13 @@ eevee_stat_fig = px.bar(
                             [0.55, 'hsla(120, 100%, 50%, 0.75)'], [1, 'hsla(180, 100%, 50%, 0.75)']],
     range_color=[40, 200],
     facet_col='Name',
-    template='plotly_dark',
     text='value',
     title='STAT DISTRIBUTION'
 )
 for a in eevee_stat_fig.layout.annotations:
-    # a.text = a.text.split("=")[1]
     a.text = ''
-eevee_stat_fig.update(layout_coloraxis_showscale=False, layout_title_x=0.5,
-                      layout_margin=dict(b=0), layout_font_family='monospace', layout_font_size=14)
-eevee_stat_fig.update_xaxes(visible=False)
 eevee_stat_fig.update_yaxes(title='')
-eevee_stat_fig.update_traces(textfont_color='white', textfont_size=14)
+eevee_stat_fig.update_traces(textfont_color='black', textfont_size=14)
 
 # eeveelution bst graph
 print('Creating eeveelution bst graph')
@@ -75,18 +75,15 @@ eevee_bst_fig = px.bar(
                             [0.55, 'hsla(120, 100%, 50%, 0.75)'], [1, 'hsla(180, 100%, 50%, 0.75)']],
     range_color=[300, 720],
     facet_col='Name',
-    template='plotly_dark',
     height=175,
     text='value',
     title='OVERALL'
 )
 for a in eevee_bst_fig.layout.annotations:
     a.text = ''
-eevee_bst_fig.update(layout_coloraxis_showscale=False, layout_title_x=0.5,
-                     layout_margin=dict(b=10), layout_font_family='monospace', layout_font_size=14)
-eevee_bst_fig.update_xaxes(visible=False)
+eevee_bst_fig.update_layout(margin=dict(l=100))
 eevee_bst_fig.update_yaxes(title='')
-eevee_bst_fig.update_traces(textfont_color='white', textfont_size=14)
+eevee_bst_fig.update_traces(textfont_color='black', textfont_size=14)
 
 # eeveelution name and src table
 print('Creating eeveelution table')
@@ -102,36 +99,41 @@ layout = html.Div(children=[
         html.H1([dcc.Link('COMPAREON', href='/')], className='title'),
         html.Nav([
             dcc.Link('HOME', href='/'),
-            dcc.Link('COMPARE', href='/compare')
+            dcc.Link('COMPARE', href='/compare', className='current')
         ]),
         html.Img(src='/assets/umbreon_logo.png', className='umbr_logo')
     ]),
     html.Div(className='container', children=[
-        html.Div([
+        html.Div(
             dcc.Dropdown(
                 id='dropdown',
                 options=names,
                 multi=True,
-                style={'background': '#111111',
-                       'border': 'none', 'color': 'black'}
+                value=eeveelutions,
+                style={'background': '#EDEDED', 'color': 'black'}
             )
-        ]),
+        ),
         html.Div(className='content', children=[
             dash_table.DataTable(
                 id='table',
                 data=eevee_data,
                 columns=eevee_columns,
-                style_header={'whiteSpace': 'normal', 'height': 'auto', 'padding': '0 5%'},
+                style_header={'whiteSpace': 'normal', 'height': 'auto', 'padding': '0 5px',
+                              'fontFamily': "Georgia, 'Times New Roman', Times, serif"},
                 css=[{'selector': 'table', 'rule': 'table-layout: fixed'}],
-                style_cell={'background': '#111111',
-                            'border': 'none', 'color': 'white'},
+                style_cell={'background': '#EDEDED',
+                            'border': 'none', 'color': 'black',
+                            'whiteSpace': 'normal', 'height': 'auto', 'padding': '0 5px',
+                            'fontFamily': "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"},
             ),
-            dcc.Graph(id='bar', figure=eevee_stat_fig),
-            dcc.Graph(id='total_bar', figure=eevee_bst_fig)
+            dcc.Graph(id='bar', figure=eevee_stat_fig,
+                      config={'displayModeBar': False}),
+            dcc.Graph(id='total_bar', figure=eevee_bst_fig,
+                      config={'displayModeBar': False})
         ])
     ]),
-    html.Footer(className='footer', children='Anurag')
-], style={'background': '#cece8a'})
+    html.Footer(className='footer', children='Caffeine 2021')
+])
 
 print('Done\n')
 
@@ -139,23 +141,23 @@ print('Done\n')
 @app.callback(Output('bar', 'figure'), Output('total_bar', 'figure'), Output('table', 'data'),
               Output('table', 'columns'), Input('dropdown', 'value'))
 def update_graph(dropdown_value):
+    dropdown_value = dropdown_value[:10]
     if dropdown_value is None or len(dropdown_value) == 0:
         stat_callback_df = eevee_stat_df
         bst_callback_df = eevee_bst_df
         src_callback_df = eevee_src_df
     else:
         stat_callback_df = stat_df[stat_df['Name'].isin(dropdown_value)]
-        stat_callback_df['Name'] = pd.Categorical(stat_callback_df['Name'], dropdown_value)
-        stat_callback_df.sort_values('Name', inplace=True)
-        
-        bst_callback_df = bst_df[bst_df['Name'].isin(dropdown_value)]
-        bst_callback_df['Name'] = pd.Categorical(bst_callback_df['Name'], dropdown_value)
-        bst_callback_df.sort_values('Name', inplace=True)
-        
-        src_callback_df = src_df[src_df['Name'].isin(dropdown_value)]
-        src_callback_df['Name'] = pd.Categorical(src_callback_df['Name'], dropdown_value)
-        src_callback_df.sort_values('Name', inplace=True)
+        # stat_callback_df['Name'] = pd.Categorical(stat_callback_df['Name'], dropdown_value)
+        # stat_callback_df.sort_values('Name', inplace=True)
 
+        bst_callback_df = bst_df[bst_df['Name'].isin(dropdown_value)]
+        # bst_callback_df['Name'] = pd.Categorical(bst_callback_df['Name'], dropdown_value)
+        # bst_callback_df.sort_values('Name', inplace=True)
+
+        src_callback_df = src_df[src_df['Name'].isin(dropdown_value)]
+        # src_callback_df['Name'] = pd.Categorical(src_callback_df['Name'], dropdown_value)
+        # src_callback_df.sort_values('Name', inplace=True)
 
     stat_fig = px.bar(
         stat_callback_df,
@@ -166,18 +168,13 @@ def update_graph(dropdown_value):
                                 [0.55, 'hsla(120, 100%, 50%, 0.75)'], [1, 'hsla(180, 100%, 50%, 0.75)']],
         range_color=[40, 200],
         facet_col='Name',
-        template='plotly_dark',
         text='value',
         title='STAT DISTRIBUTION'
     )
     for a in stat_fig.layout.annotations:
-        # a.text = a.text.split("=")[1]
         a.text = ''
-    stat_fig.update(layout_coloraxis_showscale=False, layout_title_x=0.5,
-                    layout_margin=dict(b=0), layout_font_family='monospace', layout_font_size=14)
-    stat_fig.update_xaxes(visible=False)
     stat_fig.update_yaxes(title='')
-    stat_fig.update_traces(textfont_color='white', textfont_size=14)
+    stat_fig.update_traces(textfont_color='black', textfont_size=14)
 
     bst_fig = px.bar(
         bst_callback_df,
@@ -188,18 +185,15 @@ def update_graph(dropdown_value):
                                 [0.55, 'hsla(120, 100%, 50%, 0.75)'], [1, 'hsla(180, 100%, 50%, 0.75)']],
         range_color=[300, 720],
         facet_col='Name',
-        template='plotly_dark',
         height=175,
         text='value',
         title='OVERALL'
     )
     for a in bst_fig.layout.annotations:
         a.text = ''
-    bst_fig.update(layout_coloraxis_showscale=False, layout_title_x=0.5,
-                   layout_margin=dict(b=10), layout_font_family='monospace', layout_font_size=14)
-    bst_fig.update_xaxes(visible=False)
+    bst_fig.update_layout(margin=dict(l=100))
     bst_fig.update_yaxes(title='')
-    bst_fig.update_traces(textfont_color='white', textfont_size=14)
+    bst_fig.update_traces(textfont_color='black', textfont_size=14)
 
     data = transform(src_callback_df).to_dict('records')
     columns = [dict(name=i, id=i, presentation='markdown')
