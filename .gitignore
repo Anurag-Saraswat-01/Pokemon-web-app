@@ -1,8 +1,10 @@
 trial.py
 trial2.py
+index.py
 pokedex.csv
 app_old.py
 pokedex_with_src_icon.csv
 /ipynb_stuff
 __pycache__
 /apps/__pycache__
+venv
