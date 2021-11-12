@@ -4,3 +4,5 @@ pokedex.csv
 app_old.py
 pokedex_with_src_icon.csv
 /ipynb_stuff
+__pycache__
+/apps/__pycache__

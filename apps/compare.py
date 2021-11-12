@@ -23,7 +23,7 @@ stat_df = pd.melt(dex_df, id_vars='Name', value_vars=[
                   'Speed', 'Sp. Defense', 'Sp. Attack', 'Defense', 'Attack', 'HP'], var_name='stat')
 # df for base stat total
 bst_df = pd.melt(dex_df, id_vars='Name',
-                 value_vars='Stat. Total', var_name='Stat. Total')
+                 value_vars='Stat Total', var_name='Stat Total')
 # df for img src
 src_df = dex_df[['Name', 'Image', 'Type', 'Ability', 'Hidden Ability']].copy()
 
@@ -47,44 +47,46 @@ eevee_stat_fig = px.bar(
     x='value',
     y='stat',
     color='value',
-    color_continuous_scale=[[0, 'red'], [
-        0.35, 'yellow'], [0.55, 'lime'], [1, 'cyan']],
+    color_continuous_scale=[[0, 'hsla(0, 100, 50, 0.75)'], [0.35, 'hsla(60, 100%, 50%, 0.75)'],
+                            [0.55, 'hsla(120, 100%, 50%, 0.75)'], [1, 'hsla(180, 100%, 50%, 0.75)']],
     range_color=[40, 200],
     facet_col='Name',
     template='plotly_dark',
-    text='value'
+    text='value',
+    title='STAT DISTRIBUTION'
 )
 for a in eevee_stat_fig.layout.annotations:
     # a.text = a.text.split("=")[1]
     a.text = ''
-eevee_stat_fig.update(layout_coloraxis_showscale=False,
-                      layout_margin=dict(b=0), layout_font_family='monospace')
+eevee_stat_fig.update(layout_coloraxis_showscale=False, layout_title_x=0.5,
+                      layout_margin=dict(b=0), layout_font_family='monospace', layout_font_size=14)
 eevee_stat_fig.update_xaxes(visible=False)
 eevee_stat_fig.update_yaxes(title='')
-eevee_stat_fig.update_traces(textfont_color='black')
+eevee_stat_fig.update_traces(textfont_color='white', textfont_size=14)
 
 # eeveelution bst graph
 print('Creating eeveelution bst graph')
 eevee_bst_fig = px.bar(
     eevee_bst_df,
-    y='Stat. Total',
+    y='Stat Total',
     x='value',
     color='value',
-    color_continuous_scale=[[0, 'red'], [
-        0.3, 'yellow'], [0.7, 'lime'], [1, 'cyan']],
+    color_continuous_scale=[[0, 'hsla(0, 100, 50, 0.75)'], [0.35, 'hsla(60, 100%, 50%, 0.75)'],
+                            [0.55, 'hsla(120, 100%, 50%, 0.75)'], [1, 'hsla(180, 100%, 50%, 0.75)']],
     range_color=[300, 720],
     facet_col='Name',
     template='plotly_dark',
-    height=70,
-    text='value'
+    height=175,
+    text='value',
+    title='OVERALL'
 )
 for a in eevee_bst_fig.layout.annotations:
     a.text = ''
-eevee_bst_fig.update(layout_coloraxis_showscale=False,
-                     layout_margin=dict(t=0, b=10), layout_font_family='monospace')
+eevee_bst_fig.update(layout_coloraxis_showscale=False, layout_title_x=0.5,
+                     layout_margin=dict(b=10), layout_font_family='monospace', layout_font_size=14)
 eevee_bst_fig.update_xaxes(visible=False)
 eevee_bst_fig.update_yaxes(title='')
-eevee_bst_fig.update_traces(textfont_color='black')
+eevee_bst_fig.update_traces(textfont_color='white', textfont_size=14)
 
 # eeveelution name and src table
 print('Creating eeveelution table')
@@ -119,7 +121,7 @@ layout = html.Div(children=[
                 id='table',
                 data=eevee_data,
                 columns=eevee_columns,
-                # style_header={'display': 'none'},
+                style_header={'whiteSpace': 'normal', 'height': 'auto', 'padding': '0 5%'},
                 css=[{'selector': 'table', 'rule': 'table-layout: fixed'}],
                 style_cell={'background': '#111111',
                             'border': 'none', 'color': 'white'},
@@ -141,56 +143,63 @@ def update_graph(dropdown_value):
         stat_callback_df = eevee_stat_df
         bst_callback_df = eevee_bst_df
         src_callback_df = eevee_src_df
-    elif type(dropdown_value) is str:
-        stat_callback_df = stat_df[stat_df['Name'] == dropdown_value]
-        bst_callback_df = bst_df[bst_df['Name'] == dropdown_value]
-        src_callback_df = src_df[src_df['Name'] == dropdown_value]
     else:
         stat_callback_df = stat_df[stat_df['Name'].isin(dropdown_value)]
+        stat_callback_df['Name'] = pd.Categorical(stat_callback_df['Name'], dropdown_value)
+        stat_callback_df.sort_values('Name', inplace=True)
+        
         bst_callback_df = bst_df[bst_df['Name'].isin(dropdown_value)]
+        bst_callback_df['Name'] = pd.Categorical(bst_callback_df['Name'], dropdown_value)
+        bst_callback_df.sort_values('Name', inplace=True)
+        
         src_callback_df = src_df[src_df['Name'].isin(dropdown_value)]
+        src_callback_df['Name'] = pd.Categorical(src_callback_df['Name'], dropdown_value)
+        src_callback_df.sort_values('Name', inplace=True)
+
 
     stat_fig = px.bar(
         stat_callback_df,
         y='stat',
         x='value',
         color='value',
-        color_continuous_scale=[[0, 'red'], [
-            0.35, 'yellow'], [0.55, 'lime'], [1, 'cyan']],
+        color_continuous_scale=[[0, 'hsla(0, 100, 50, 0.75)'], [0.35, 'hsla(60, 100%, 50%, 0.75)'],
+                                [0.55, 'hsla(120, 100%, 50%, 0.75)'], [1, 'hsla(180, 100%, 50%, 0.75)']],
         range_color=[40, 200],
         facet_col='Name',
         template='plotly_dark',
-        text='value'
+        text='value',
+        title='STAT DISTRIBUTION'
     )
     for a in stat_fig.layout.annotations:
         # a.text = a.text.split("=")[1]
         a.text = ''
-    stat_fig.update(layout_coloraxis_showscale=False,
-                    layout_margin=dict(b=0), layout_font_family='monospace')
+    stat_fig.update(layout_coloraxis_showscale=False, layout_title_x=0.5,
+                    layout_margin=dict(b=0), layout_font_family='monospace', layout_font_size=14)
     stat_fig.update_xaxes(visible=False)
     stat_fig.update_yaxes(title='')
-    stat_fig.update_traces(textfont_color='black')
+    stat_fig.update_traces(textfont_color='white', textfont_size=14)
 
     bst_fig = px.bar(
         bst_callback_df,
-        y='Stat. Total',
+        y='Stat Total',
         x='value',
         color='value',
-        color_continuous_scale=[[0, 'red'], [
-            0.3, 'yellow'], [0.7, 'lime'], [1, 'cyan']],
+        color_continuous_scale=[[0, 'hsla(0, 100, 50, 0.75)'], [0.35, 'hsla(60, 100%, 50%, 0.75)'],
+                                [0.55, 'hsla(120, 100%, 50%, 0.75)'], [1, 'hsla(180, 100%, 50%, 0.75)']],
         range_color=[300, 720],
         facet_col='Name',
         template='plotly_dark',
-        height=70,
-        text='value'
+        height=175,
+        text='value',
+        title='OVERALL'
     )
     for a in bst_fig.layout.annotations:
         a.text = ''
-    bst_fig.update(layout_coloraxis_showscale=False,
-                   layout_margin=dict(t=0, b=10), layout_font_family='monospace')
+    bst_fig.update(layout_coloraxis_showscale=False, layout_title_x=0.5,
+                   layout_margin=dict(b=10), layout_font_family='monospace', layout_font_size=14)
     bst_fig.update_xaxes(visible=False)
     bst_fig.update_yaxes(title='')
-    bst_fig.update_traces(textfont_color='black')
+    bst_fig.update_traces(textfont_color='white', textfont_size=14)
 
     data = transform(src_callback_df).to_dict('records')
     columns = [dict(name=i, id=i, presentation='markdown')

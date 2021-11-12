@@ -83,3 +83,16 @@ tbody > *:nth-child(3) img {
 .dash-header > *, .dash-cell-value > * {
 	text-align: center;
 }
+
+.dash-header > * {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+/* #total_bar {
+	border: 2px solid red;
+}
+
+#bar {
+	border: 2px solid blue;
+} */
